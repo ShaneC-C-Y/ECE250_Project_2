@@ -22,8 +22,9 @@ L = length(x)/N;
 % each column will get the same h
 %   the function in Matlab is different from the note we define 
 %   with a scale sqrt(2)
-mag = raylrnd(1/sqrt(2),L,1);   
-h = mag.*exp(1j*2*pi*rand(L,1));    % H = |H|e^j*unif(0~2pi)
+% use 1, L here is easy
+mag = raylrnd(1/sqrt(2),1, L);   
+h = mag.*exp(1j*2*pi*rand(1, L));    % H = |H|e^j*unif(0~2pi)
 
 % use diagonal matrix to multiple
 % so each column just multiple a scale 
@@ -43,7 +44,7 @@ y = awgn(y_no_noise, 10*log10(snr), 'measured');
 
 % make y and h to a row vector to be output
 y = y(:).';
-h = torowvector(h);
+% h = torowvector(h);
 
 end
 

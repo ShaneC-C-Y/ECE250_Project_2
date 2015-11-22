@@ -33,14 +33,14 @@ error_count_bit = 0;
 n_run = 0;
 
 % put here because the error rate caculator outside while loop need
-Num = N*L*k/n;
+Num = N*L*k/n*2;
 assert(mod(Num,1)==0, 'Generated number not a integer');
 
 while error_count_symbol <= 300
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % genertor                                          %
-    % everytime we need a N*L bit in interleaver, so    %
-    % we should generate 2*N*L / (n/k) bits             %
+    % everytime we need a 2*N*L bit in interleaver, so  %
+    % we should generate N*L / (n/k)*2 bits             %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     bn = bit_generator(Num);
 
@@ -49,23 +49,26 @@ while error_count_symbol <= 300
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     dn = Encoder(bn, n, type);
     
-    xp = interleaver(dn, L, N);
+    % if use interleaver before QPSK, you should but 2N 
+    % due to QPSK will shrink 2 bits to 1 bit
+    xp = interleaver(dn, L, N*2);
 
     [xR, xI] = QPSK_constellation_mapper(xp);
     u = v2_mergetworeal(xR,xI);
     
-    [a1, a2] = Alamouti(u, N);
+    % should Alamouti know N?
+    [a1, a2] = Alamouti(u);
 
     [y1, h1] = channel(a1, snr, N);
     [y2, h2] = channel(a2, snr, N);
 
-    y_afterfilter =  deAlamouti(y1, y2, h1, h2, N);
+    y_afterfilter =  deAlamouti(y1 + y2, h1, h2, N);
     
     [y_afterfilterR, y_afterfilterI] = v2_backtoreal(y_afterfilter);
     
     yp = QPSK_constellation_demapper(y_afterfilterR, y_afterfilterI);
     
-    dnhat = deinterleaver(yp, L, N);
+    dnhat = deinterleaver(yp, L, N*2);
 
     bnhat = Decoder(dnhat, n, type);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
