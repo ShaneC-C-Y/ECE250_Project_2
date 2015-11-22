@@ -54,19 +54,16 @@ while error_count_symbol <= 300
     xp = interleaver(dn, L, N*2);
 
     [xR, xI] = QPSK_constellation_mapper(xp);
-    u = v2_mergetworeal(xR,xI);
     
     % should Alamouti know N?
-    [a1, a2] = Alamouti(u);
+    [a1, a2] = Alamouti(xR + 1i*xI);
 
     [y1, h1] = channel(a1, snr, N);
     [y2, h2] = channel(a2, snr, N);
 
     y_afterfilter =  deAlamouti(y1 + y2, h1, h2, N);
-    
-    [y_afterfilterR, y_afterfilterI] = v2_backtoreal(y_afterfilter);
-    
-    yp = QPSK_constellation_demapper(y_afterfilterR, y_afterfilterI);
+        
+    yp = QPSK_constellation_demapper(real(y_afterfilter), imag(y_afterfilter));
     
     dnhat = deinterleaver(yp, L, N*2);
 

@@ -30,21 +30,11 @@ U = [HA_1./h_norm_1 zeros(2); zeros(2) HA_2./h_norm_2];
 
 % y_bar = (R)x_ + w, 4 by xx matrix
 y_bar = U'*y_;
+
+% we need to rearrange y_bar to original format
 y_bar_1 = y_bar(1:2,:);
 y_bar_2 = y_bar(3:4,:);
 y_afterfilter = [y_bar_1(:).', y_bar_2(:).'];
-
-% we can get u1 u2, also u3.... from here
-% u1 = [y_bar(1), y_bar(3)];
-% u2 = [y_bar(2), y_bar(4)];
-% y_temp = y_bar;
-% y_temp([2, 3], :) = y_bar([3, 2],:);
-% y_afterfilter = y_temp(:).';
-
-% a1 = angle(y);
-% a2 = angle(y_afterfilter);
-% t= 1:84;
-% plot(t, a1, t, a2)
 
 end
 
