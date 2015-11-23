@@ -32,6 +32,7 @@ U = [HA_1./h_norm_1 zeros(2); zeros(2) HA_2./h_norm_2];
 y_bar = U'*y_;
 
 % we need to rearrange y_bar to original format
+% this is the "deinterleave" in HW3 solution p.12, last sentence
 y_bar_1 = y_bar(1:2,:);
 y_bar_2 = y_bar(3:4,:);
 y_out = [y_bar_1(:).', y_bar_2(:).'];

@@ -1,13 +1,12 @@
-function [bnhat, dnhat] = Receiver( y_out, L, N, n, type)
+function dnhat = ReceiverSIMO( y_afterfilter, L, N)
 %%%%%%%%%%%%%%%%%
 % receiver      %
 % for 
 %%%%%%%%%%%%%%%%%
 
 % from series to parallels, and back to series
-yp = QPSK_constellation_demapper(real(y_out), imag(y_out));
+yp = QPSK_constellation_demapper(real(y_afterfilter), imag(y_afterfilter));
     
 dnhat = deinterleaver(yp, L, N*2);
 
-bnhat = Decoder(dnhat, n, type);
 end
