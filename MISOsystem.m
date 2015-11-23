@@ -40,12 +40,8 @@ while error_count_bit <= 300
 
     [y1, h1] = channel(a1, snr, N);
     [y2, h2] = channel(a2, snr, N);
-
-    % extra part in Receiver in MISO
-    y_out =  deAlamouti(y1 + y2, h1, h2, N);
     
-    % the Receiver here is no matched filter
-    [bnhat, retransmit_case] = Receiver( y_out, L, N, n, type);
+    [bnhat, retransmit_case] = Receiver(y1, y2, h1, h2, L, N, n, type, 'MISO');
     
     % here we don't need to compare tie_case, they will retransmit
     if ~isempty(retransmit_case)

@@ -38,17 +38,8 @@ while error_count_bit <= 300
     [y1, h1] = channel(xR +1i*xI, snr, N);
     [y2, h2] = channel(xR +1i*xI, snr, N);
 
-    % each antenna has one
-    y_afterfilter_1 = matched_filter(y1, h1, N);
-    y_afterfilter_2 = matched_filter(y2, h2, N);
-    
     % the Receiver here is no matched filter
-    dnhat = ReceiverSIMO( y_afterfilter_1, L, N);
-    dnhat2 = ReceiverSIMO( y_afterfilter_2, L, N);
-    
-    [bnhat, retransmit_case] = repetition_decoderSIMO(dnhat, dnhat2);
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    [bnhat, retransmit_case] = Receiver(y1, y2, h1, h2, L, N, n, type, 'SIMO');
     
     % here we don't need to compare tie_case, they will retransmit
     if ~isempty(retransmit_case)
