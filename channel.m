@@ -44,7 +44,5 @@ y = awgn(y_no_noise, 10*log10(snr), 'measured');
 
 % make y and h to a row vector to be output
 y = y(:).';
-% h = torowvector(h);
-
 end
 

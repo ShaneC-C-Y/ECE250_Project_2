@@ -1,4 +1,4 @@
-function [bnhat, dnhat] = Receiver( y_out, L, N, n, type)
+function [bnhat, retransmit_case] = Receiver( y_out, L, N, n, type)
 %%%%%%%%%%%%%%%%%
 % receiver      %
 % for 
@@ -9,5 +9,5 @@ yp = QPSK_constellation_demapper(real(y_out), imag(y_out));
     
 dnhat = deinterleaver(yp, L, N*2);
 
-bnhat = Decoder(dnhat, n, type);
+[bnhat, retransmit_case] = Decoder(dnhat, n, type);
 end

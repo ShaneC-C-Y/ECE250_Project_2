@@ -1,22 +1,16 @@
-function [ bnhat ] = repetition_decoderSIMO( dnhat, dnhat2, n )
+function [bnhat, retransmit_case]...
+                    = repetition_decoderSIMO( dnhat1, dnhat2)
 
-% majority logic decoding
-% dhnat2 = [ dn~[1] ...   ...
-%            dn~[2] ...   ...
-%              .     .     .
-%            dn~[L] ... dn~[Num*(n/k)] ]  
-%
-% m =      [ bn~[1] ...  bn~[Num]  ]
-dnhat_a = reshape(dnhat, n, []);
-dnhat_b = reshape(dnhat2, n, []);
+% compare the sequence from different channel
+% if there is any bit not the same in one time slot
+% call to retransmit
+dnhat1_matrix = reshape(dnhat1, 2, []);
+dnhat2_matrix = reshape(dnhat2, 2, []);
 
-m = sum([dnhat_a; dnhat_b], 1);
+[~, retransmit_case] = find(dnhat1_matrix ~= dnhat2_matrix);
 
-% check value n/2
-% it works only when n = 2t + 1
-% otherwise there will be detection error
-c = n;
-bnhat = m>c;
-
+% dnhat_m(2,:), dnhat_m(1or2,:) are the same if just 
+% need to consider non-retransmit_case
+bnhat = dnhat1_matrix(1,:);
 end
 
