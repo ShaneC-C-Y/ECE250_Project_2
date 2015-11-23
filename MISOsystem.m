@@ -9,12 +9,6 @@ function [pe_symbol, pe_bit, n_total_bit] = MISOsystem(snr, L, n, k, type)
 %   one channel in this system                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% fc = 1.8e+09;
-% W = 10e+03;
-% Ts = 1/W;
-% 
-% Tc = 4.2e-03;
-
 % amount of symbol in one Tc
 % set a number dividable by 2 and 7, choosing 42
 % because QPSK need to deal with even number and hamming74 code
@@ -44,30 +38,22 @@ while error_count_symbol <= 300
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     bn = bit_generator(Num);
 
-%     [xR, xI] = Transmitter(bn, L, N, n, type);
-
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    dn = Encoder(bn, n, type);
-    
-    % if use interleaver before QPSK, you should but 2N 
-    % due to QPSK will shrink 2 bits to 1 bit
-    xp = interleaver(dn, L, N*2);
-
-    [xR, xI] = QPSK_constellation_mapper(xp);
-    
+    % the Transmitter here is the same as Project I
+    [xR, xI] = Transmitter(bn, L, N, n, type);
+       
+    % extra part in Tranmitter in MISO
     % should Alamouti know N?
     [a1, a2] = Alamouti(xR + 1i*xI);
 
     [y1, h1] = channel(a1, snr, N);
     [y2, h2] = channel(a2, snr, N);
 
-    y_afterfilter =  deAlamouti(y1 + y2, h1, h2, N);
-        
-    yp = QPSK_constellation_demapper(real(y_afterfilter), imag(y_afterfilter));
+    % extra part in Receiver in MISO
+    y_out =  deAlamouti(y1 + y2, h1, h2, N);
     
-    dnhat = deinterleaver(yp, L, N*2);
+    % the Receiver here is no matched filter
+    [bnhat, dnhat] = Receiver( y_out, L, N, n, type);
 
-    bnhat = Decoder(dnhat, n, type);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     assert(length(bn) == length(bnhat),...
@@ -84,23 +70,4 @@ end
 n_total_bit = n_run*Num;
 pe_symbol = error_count_symbol / n_total_bit;
 pe_bit = error_count_bit / (n_total_bit*n);
-
-
-%%%%%%%%%%%%%%%
-% fix it later
-%%%%%%%%%%%%%%%
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % repetition                %
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% [xR2, xI2] = Transmitter(bn, L, N, n, 'repetition');
-% 
-% [y_R2, h_R2] = channel(xR2, sigma_w, N);
-% [y_I2, h_I2] = channel(xI2, sigma_w, N);
-% 
-% [bnhat2, dnhat2] = Receiver(y_R2, y_I2, h_R2, h_I2, L, N, n, 'repetition');
-% 
-% bn_compare2 = bn(1:length(bnhat2));
-% pe2 = length(find((bnhat2 - bn_compare2)~=0)) / length(bnhat2);
-
 end

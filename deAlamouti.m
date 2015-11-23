@@ -1,4 +1,4 @@
-function [ y_afterfilter ] = deAlamouti(y, h1, h2, N)
+function [ y_out ] = deAlamouti(y, h1, h2, N)
 %UNTITLED9 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -34,7 +34,7 @@ y_bar = U'*y_;
 % we need to rearrange y_bar to original format
 y_bar_1 = y_bar(1:2,:);
 y_bar_2 = y_bar(3:4,:);
-y_afterfilter = [y_bar_1(:).', y_bar_2(:).'];
+y_out = [y_bar_1(:).', y_bar_2(:).'];
 
 end
 

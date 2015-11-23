@@ -5,11 +5,11 @@ function [xR, xI] = Transmitter(bn, L, N, n, type)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 dn = Encoder(bn, n, type);
 
-xp = interleaver(dn, L, N);
+% if use interleaver before QPSK, you should but 2N 
+% due to QPSK will shrink 2 bits to 1 bit
+xp = interleaver(dn, L, N*2);
 
 % xR, xI are real
 [xR, xI] = QPSK_constellation_mapper(xp);
-
-Alamouti(xR, xI);
 end
 
